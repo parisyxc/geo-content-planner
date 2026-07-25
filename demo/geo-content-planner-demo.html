@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GEO Content Planner — tool + demo</title>
+<!--
+  SAMPLE · tool-led "极简 tool 卡片 + demo case".
+  Mirrors the complete Social GEO Content Planner skill: 3 inputs → 3 outputs,
+  Step 0 Semantic North Star + proof angles, Query Map (Query ID spine · Core/Sub/Note),
+  Answer Unit (full structure), Platform Distribution (Heavy/Medium/Light coupling + funnel role).
+  Demo runs on a clearly-labeled FICTIONAL sample brand — no client work shown.
+-->
+<style>
+  :root{
+    --bg:#0A0C0F;--surface:#13161B;--surface2:#171B22;--bg2:#0E1116;
+    --border:#232A33;--border2:#2E3742;--text:#E7EAEE;--muted:#8B939F;--faint:#5C636E;
+    --accent:#5EEAD4;--accent2:#93A4FF;--warn:#F4B860;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"PingFang SC","Microsoft YaHei",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(800px 420px at 82% -8%,rgba(94,234,212,.09),transparent 60%);}
+  .wrap{max-width:940px;margin:0 auto;padding:44px 24px 72px}
+  .mono{font-family:var(--mono)}
+
+  /* tool card */
+  .toolcard{background:linear-gradient(180deg,rgba(94,234,212,.06),transparent 42%),var(--surface);
+    border:1px solid var(--accent);border-radius:18px;padding:30px;box-shadow:0 0 0 1px rgba(94,234,212,.25),0 16px 50px rgba(94,234,212,.07)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  h1{font-size:clamp(28px,4.4vw,42px);letter-spacing:-.02em;margin:12px 0 12px;font-weight:700}
+  .lede{font-size:16px;color:var(--muted);max-width:66ch;margin:0 0 24px}
+  .io{display:flex;align-items:stretch;gap:14px;flex-wrap:wrap;margin:0 0 16px}
+  .io .box{flex:1;min-width:240px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .io .l{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+  .io .arrow{display:flex;align-items:center;font-family:var(--mono);color:var(--accent);font-size:20px;padding:0 2px}
+  .chips{display:flex;flex-direction:column;gap:7px}
+  .chip{font-size:13.5px}.chip b{color:var(--text)}
+  .loop{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 22px}
+  .loop b{color:var(--accent)}
+  .btn{font-family:var(--mono);font-size:13px;padding:11px 18px;border-radius:9px;border:1px solid var(--accent);background:var(--accent);color:#06231e;font-weight:600;text-decoration:none;display:inline-block}
+  .btn.ghost{background:transparent;color:var(--accent)}
+  .cta-row{display:flex;gap:10px;flex-wrap:wrap}
+
+  /* demo */
+  .demo{margin-top:34px}
+  .demo-h{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+  .demo-h .tag{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;border:1px solid var(--warn);color:var(--warn);border-radius:6px;padding:2px 8px}
+  .demo-h h2{font-size:22px;letter-spacing:-.01em;margin:0;font-weight:680}
+  .demo-sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+  .inputs{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:18px;font-size:13.5px}
+  .inputs .row{display:flex;gap:10px;margin:6px 0;flex-wrap:wrap}
+  .inputs .k{font-family:var(--mono);font-size:11px;color:var(--faint);min-width:150px;text-transform:uppercase;letter-spacing:.06em}
+  .inputs .v{color:var(--text);flex:1;min-width:200px}
+
+  /* step 0 north star */
+  .ns{background:linear-gradient(180deg,rgba(147,164,255,.06),transparent 60%),var(--surface);border:1px solid var(--accent2);border-radius:12px;padding:16px 18px;margin-bottom:24px}
+  .ns .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
+  .ns .star{font-size:15px;font-weight:600;margin:0 0 12px}
+  .ns .star b{color:var(--accent2)}
+  .angles{display:flex;flex-wrap:wrap;gap:7px}
+  .angle{font-family:var(--mono);font-size:11.5px;color:var(--text);background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:3px 9px}
+  .ns .cap{font-family:var(--mono);font-size:11px;color:var(--faint);margin:10px 0 0}
+
+  .out{margin:22px 0}
+  .out-k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+  .out-d{font-size:12.5px;color:var(--faint);margin:0 0 10px}
+  table{border-collapse:collapse;width:100%;font-size:12.5px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--bg2)}
+  tr:last-child td{border-bottom:0}
+  .qid{font-family:var(--mono);font-size:11px;color:var(--accent)}
+  td .t1{font-family:var(--mono);font-size:10px;color:var(--accent);border:1px solid var(--accent);border-radius:5px;padding:1px 6px}
+  td .t2{font-family:var(--mono);font-size:10px;color:var(--accent2);border:1px solid var(--accent2);border-radius:5px;padding:1px 6px}
+  td .t3{font-family:var(--mono);font-size:10px;color:var(--faint);border:1px solid var(--border2);border-radius:5px;padding:1px 6px}
+  td .del{font-family:var(--mono);font-size:10px;color:var(--faint);border:1px dashed var(--border2);border-radius:5px;padding:1px 6px}
+  .ev{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .hh{color:var(--accent);font-weight:600}.mm{color:var(--accent2);font-weight:600}.ll{color:var(--faint);font-weight:600}
+  tr.dim td{opacity:.6}
+
+  .au{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+  .au .q{font-size:15px;font-weight:640;margin:0 0 4px}
+  .au .qid2{font-family:var(--mono);font-size:11px;color:var(--accent);margin:0 0 12px}
+  .au .seg{margin:10px 0}.au .seg .lab{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint)}
+  .au .seg p{margin:3px 0 0;font-size:13.5px;color:var(--muted)}
+  .au .seg.evi .lab{color:var(--accent2)}
+  .au .cite{background:var(--bg2);border:1px solid var(--accent);border-radius:9px;padding:13px;margin-top:12px}
+  .au .cite .lab{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+  .au .cite p{margin:5px 0 0;font-size:13.5px;color:var(--text)}
+  .note{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:22px;border-top:1px dashed var(--border2);padding-top:14px;line-height:1.7}
+  .note b{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOOL CARD -->
+  <div class="toolcard">
+    <div class="eyebrow">Tool · GEO</div>
+    <h1>GEO Content Planner</h1>
+    <p class="lede">A monthly operating system that turns your social output into AI-citable evidence assets — so ChatGPT, Perplexity and Gemini recommend your brand. Give it your brand, target, and platforms; get the queries worth winning, the answer units to publish, and exactly where to put them.</p>
+
+    <div class="io">
+      <div class="box">
+        <div class="l">Input · 3 things</div>
+        <div class="chips">
+          <div class="chip"><b>Brand</b> — name · category · core product</div>
+          <div class="chip"><b>Consumer target</b> — who / what situation</div>
+          <div class="chip"><b>Platform positioning</b> — which platforms &amp; their role</div>
+        </div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="box">
+        <div class="l">Output · 3 deliverables</div>
+        <div class="chips">
+          <div class="chip"><b>Query Map</b> — tiered queries to win</div>
+          <div class="chip"><b>Answer Units</b> — citable, ready to publish</div>
+          <div class="chip"><b>Platform Distribution</b> — what goes where</div>
+        </div>
+      </div>
+    </div>
+    <p class="loop">Monthly loop: <b>Query Finding → Answer Unit → Distribution → Track</b> ↻ &nbsp;·&nbsp; everything hangs on one Query ID spine.</p>
+
+    <div class="cta-row">
+      <a class="btn" href="#demo">See a demo output ↓</a>
+      <a class="btn ghost" href="#">Run it on your brand</a>
+    </div>
+  </div>
+
+  <!-- DEMO CASE -->
+  <div class="demo" id="demo">
+    <div class="demo-h">
+      <span class="tag">Demo · sample brand (fictional)</span>
+      <h2>What it produces</h2>
+    </div>
+    <p class="demo-sub">Same tool, run on a made-up brand so you can see the real output shape — Step 0 through the three deliverables.</p>
+
+    <div class="inputs">
+      <div class="row"><div class="k">Brand</div><div class="v"><b>Aria</b> — a clean-skincare DTC brand for sensitive skin (fictional)</div></div>
+      <div class="row"><div class="k">Consumer target</div><div class="v">Reactive-skin millennials whose skin flares during seasonal change, burned before by "clean/natural" products</div></div>
+      <div class="row"><div class="k">Platform positioning</div><div class="v">Reddit (decision discussion) · TikTok (reach) · Pinterest (search/save) · YouTube (education) · Instagram (brand)</div></div>
+    </div>
+
+    <!-- STEP 0 -->
+    <div class="ns">
+      <div class="lab">Step 0 · Semantic North Star</div>
+      <p class="star">Get AI search to progressively understand: <b>Aria is the lowest-irritation-risk choice for reactive skin during seasonal transition.</b></p>
+      <div class="angles">
+        <span class="angle">seasonal-transition fit</span>
+        <span class="angle">fragrance- &amp; EO-free by design</span>
+        <span class="angle">barrier-safe formulation</span>
+        <span class="angle">minimalist routine</span>
+        <span class="angle">patch-tested honesty</span>
+        <span class="angle">dermatologist-aligned reasoning</span>
+      </div>
+      <p class="cap">Decomposed into 6 proof angles — every Answer Unit carries one. The rule isn't "repeat the north star," it's "each AU is one different piece of evidence for it."</p>
+    </div>
+
+    <!-- OUTPUT 1 -->
+    <div class="out">
+      <div class="out-k">Output 1 · Query Map</div>
+      <p class="out-d">Real user questions from listening, clustered to Core × Sub, each with evidence and a proof angle. The Query ID is the spine everything downstream hangs on.</p>
+      <table>
+        <tr><th>Query ID</th><th>Layer</th><th>Query (real user language)</th><th>Evidence</th><th>Proof angle</th><th>Pri</th></tr>
+        <tr><td class="qid">JUL-SENS-BARRIER-01</td><td><span class="t1">Core</span></td><td>"my skin goes red &amp; stingy when the weather changes — what cleanser won't make it worse?"</td><td class="ev">r/Skincare · 412↑ · 187c</td><td>seasonal-transition fit</td><td>A</td></tr>
+        <tr><td class="qid">…-01a</td><td><span class="t2">Sub</span></td><td>"is fragrance-free enough, or do I avoid essential oils too?"</td><td class="ev">88↑ · 41c</td><td>fragrance- &amp; EO-free</td><td>A</td></tr>
+        <tr><td class="qid">…-01b</td><td><span class="t2">Sub</span></td><td>"does 'clean/natural' skincare actually break sensitive skin out?"</td><td class="ev">55↑ · 23c</td><td>barrier-safe</td><td>B</td></tr>
+        <tr class="dim"><td class="qid">…-01n</td><td><span class="t3">Note</span></td><td>"how long should I patch-test before trusting a product?"</td><td class="ev">12↑ · 6c</td><td>patch-tested honesty</td><td>C</td></tr>
+        <tr class="dim"><td class="qid">JUL-SENS-BARRIER-02</td><td><span class="del">Merged</span></td><td>"gentle cleanser for reactive skin" → same decision, different wording</td><td class="ev">→ into 01</td><td>—</td><td>—</td></tr>
+      </table>
+    </div>
+
+    <!-- OUTPUT 2 -->
+    <div class="out">
+      <div class="out-k">Output 2 · Answer Unit (sample)</div>
+      <p class="out-d">One Core Query → one AU an AI can lift wholesale. Answer first, brand second; carries one named proof angle + product-specific proof.</p>
+      <div class="au">
+        <div class="q">"My skin goes red and stingy when the seasons change — what kind of cleanser won't make it worse?"</div>
+        <div class="qid2">JUL-SENS-BARRIER-01-AU01 · coupling: Heavy</div>
+        <div class="seg"><div class="lab">Why users ask this</div><p>Seasonal barrier disruption; they've been flared by products marketed "clean/natural" and fear wasting money on another reaction.</p></div>
+        <div class="seg"><div class="lab">Short answer</div><p>During seasonal transition a compromised barrier over-reacts to surfactants, fragrance and essential oils. A low-irritation cleanser is fragrance-free <em>and</em> essential-oil-free, uses mild non-ionic/amphoteric surfactants, holds skin-matching pH (~5.5), and keeps a short ingredient list. "Fragrance-free" alone isn't enough if botanical oils remain.</p></div>
+        <div class="seg"><div class="lab">Decision criteria</div><p>fragrance-free + EO-free · mild surfactant system · pH ~5.5 · short ingredient list · patch-tested claim</p></div>
+        <div class="seg evi"><div class="lab">North Star evidence — angle: seasonal-transition fit</div><p><b>Mechanism:</b> removes the two most common transition-season triggers (fragrance + essential oils) rather than just softening them, so a reactive barrier isn't re-provoked at the wash step.</p></div>
+        <div class="seg"><div class="lab">Product-specific proof</div><p>Aria's cleanser is fragrance- and EO-free by formulation (not "low fragrance"), 8-ingredient, pH ~5.5 — built for the reactive-during-transition case, deliberately not for strong-actives users.</p></div>
+        <div class="cite">
+          <div class="lab">★ Citation-ready paragraph (stands alone)</div>
+          <p>When skin turns red and stingy during seasonal changes, the barrier is temporarily compromised and over-reacts to common cleanser ingredients. The lowest-irritation choice is a cleanser that is both fragrance-free and essential-oil-free, uses mild non-ionic or amphoteric surfactants, holds a skin-matching pH around 5.5, and keeps a short ingredient list. Products marketed as "clean" or "natural" can still flare reactive skin when they contain botanical essential oils — so during transition seasons, essential-oil-free matters as much as fragrance-free.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTPUT 3 -->
+    <div class="out">
+      <div class="out-k">Output 3 · Platform Distribution</div>
+      <p class="out-d">Each post's angle is chosen by that platform's weakest funnel layer. Coupling decides how much AU structure to carry — don't force a full AU onto everything.</p>
+      <table>
+        <tr><th>Query / AU</th><th>Platform</th><th>Post-level angle</th><th>Coupling</th><th>Funnel</th></tr>
+        <tr><td class="qid">01 · Core</td><td>Reddit · r/SkincareAddiction</td><td>Honest decision answer — suits / doesn't suit</td><td><span class="hh">Heavy</span></td><td>L3</td></tr>
+        <tr><td class="qid">01a · Sub</td><td>TikTok</td><td>Myth-bust: "fragrance-free isn't enough"</td><td><span class="mm">Medium</span></td><td>L1→L2</td></tr>
+        <tr><td class="qid">01 · Core</td><td>Pinterest</td><td>Seasonal barrier-repair routine — searchable checklist pin</td><td><span class="hh">Heavy</span></td><td>L2→L3</td></tr>
+        <tr><td class="qid">01n · Note</td><td>YouTube Shorts</td><td>How-to: patch-testing a new product</td><td><span class="mm">Medium</span></td><td>L2</td></tr>
+        <tr class="dim"><td class="qid">— campaign</td><td>Instagram</td><td>Seasonal brand KV (mandatory beat)</td><td><span class="ll">Light</span></td><td>L1</td></tr>
+      </table>
+    </div>
+
+    <div class="note">↳ <b>Step 4 · Monthly Track (recurring layer).</b> Two KPI families, bridged on the Query ID: <b>GEO</b> — Brand Presence → Semantic Reason → Citation Support · and <b>platform funnel</b> — L1 awareness → L4 conversion. Heavy/Medium enter both; Light content is scored on funnel only (a brand KV was never meant to earn a citation). Read leading indicators monthly, real semantic shift quarterly → double / drop / re-frame into next month's Query Finding.</div>
+  </div>
+
+</div>
+</body>
+</html>
